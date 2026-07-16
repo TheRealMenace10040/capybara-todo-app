@@ -1,0 +1,67 @@
+:root {
+  --bg: oklch(97% 0.015 75);
+  --surface: oklch(99% 0.01 80);
+  --text: oklch(30% 0.045 50);
+  --text-muted: oklch(55% 0.03 50);
+  --text-muted-2: oklch(58% 0.03 50);
+
+  --accent: oklch(62% 0.16 10);
+  --progress-fill: oklch(68% 0.14 35);
+
+  --border: oklch(90% 0.015 75);
+  --border-2: oklch(88% 0.015 75);
+
+  --star-active: oklch(70% 0.16 75);
+  --star-inactive: oklch(85% 0.015 75);
+
+  --checkbox-border: oklch(80% 0.02 50);
+  --chip-text-inactive: oklch(45% 0.03 50);
+  --remove-btn: oklch(75% 0.02 50);
+
+  --scrim: rgba(40, 25, 15, 0.35);
+
+  --chores-bg: oklch(93% 0.09 145);
+  --chores-text: oklch(32% 0.06 145);
+  --chores-solid: oklch(70% 0.09 145);
+
+  --errands-bg: oklch(93% 0.09 235);
+  --errands-text: oklch(32% 0.06 235);
+  --errands-solid: oklch(70% 0.09 235);
+
+  --dates-bg: oklch(93% 0.09 20);
+  --dates-text: oklch(32% 0.06 20);
+  --dates-solid: oklch(70% 0.09 20);
+
+  --other-bg: oklch(93% 0.09 80);
+  --other-text: oklch(32% 0.06 80);
+  --other-solid: oklch(70% 0.09 80);
+
+  color-scheme: light;
+  font: 400 14px/1.4 -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+}
+
+button {
+  font: inherit;
+  cursor: pointer;
+}
+
+input {
+  font: inherit;
+}
+
+#root {
+  display: flex;
+  justify-content: center;
+  min-height: 100svh;
+}
