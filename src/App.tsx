@@ -29,6 +29,7 @@ function App() {
   const [filter, setFilter] = useState<AssigneeFilter>('all')
   const [categoryFilter, setCategoryFilter] = useState<CategoryFilter>('all')
   const [isAddSheetOpen, setIsAddSheetOpen] = useState(false)
+  const [editingTask, setEditingTask] = useState<Task | null>(null)
   const [mascotVisible, setMascotVisible] = useState(true)
   const [celebrating, setCelebrating] = useState(false)
   const celebrationTimer = useRef<number | undefined>(undefined)
@@ -131,6 +132,32 @@ function App() {
     setIsAddSheetOpen(false)
   }
 
+  async function handleEditTask(draft: NewTaskDraft) {
+    if (!editingTask) return
+    await updateDoc(doc(db, TASKS_COLLECTION, editingTask.id), {
+      title: draft.title,
+      category: draft.category,
+      assignee: draft.assignee,
+      due: draft.due,
+      priority: draft.priority,
+      recurrence: draft.recurrence,
+    })
+    setEditingTask(null)
+  }
+
+  async function handleDeleteEditing() {
+    if (!editingTask) return
+    await deleteDoc(doc(db, TASKS_COLLECTION, editingTask.id))
+    setEditingTask(null)
+  }
+
+  const isSheetOpen = isAddSheetOpen || !!editingTask
+
+  function closeSheet() {
+    setIsAddSheetOpen(false)
+    setEditingTask(null)
+  }
+
   return (
     <div className="screen">
       <Header />
@@ -158,6 +185,7 @@ function App() {
                 onToggleDone={handleToggleDone}
                 onTogglePriority={handleTogglePriority}
                 onRemove={handleRemove}
+                onEdit={setEditingTask}
               />
             ))}
 
@@ -171,6 +199,7 @@ function App() {
                     onToggleDone={handleToggleDone}
                     onTogglePriority={handleTogglePriority}
                     onRemove={handleRemove}
+                    onEdit={setEditingTask}
                   />
                 ))}
               </>
@@ -183,8 +212,13 @@ function App() {
         +
       </button>
 
-      {isAddSheetOpen && (
-        <AddTaskSheet onSubmit={handleAddTask} onClose={() => setIsAddSheetOpen(false)} />
+      {isSheetOpen && (
+        <AddTaskSheet
+          editingTask={editingTask}
+          onSubmit={editingTask ? handleEditTask : handleAddTask}
+          onDelete={editingTask ? handleDeleteEditing : undefined}
+          onClose={closeSheet}
+        />
       )}
 
       {celebrating && <CelebrationOverlay />}

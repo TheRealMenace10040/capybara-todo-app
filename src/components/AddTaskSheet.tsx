@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import type { Assignee, Category, DueLabel, NewTaskDraft, Recurrence } from '../types'
+import type { Assignee, Category, DueLabel, NewTaskDraft, Recurrence, Task } from '../types'
 import { DEFAULT_DRAFT } from '../types'
 
 const ASSIGNEE_OPTIONS: { value: Assignee; label: string }[] = [
@@ -24,14 +24,30 @@ const RECURRENCE_OPTIONS: { value: Recurrence; label: string }[] = [
   { value: 'monthly', label: 'Monthly' },
 ]
 
+function draftFromTask(task: Task): NewTaskDraft {
+  return {
+    title: task.title,
+    assignee: task.assignee,
+    category: task.category,
+    due: task.due,
+    priority: task.priority,
+    recurrence: task.recurrence,
+  }
+}
+
 interface AddTaskSheetProps {
+  editingTask?: Task | null
   onSubmit: (draft: NewTaskDraft) => void
+  onDelete?: () => void
   onClose: () => void
 }
 
-export function AddTaskSheet({ onSubmit, onClose }: AddTaskSheetProps) {
-  const [draft, setDraft] = useState<NewTaskDraft>(DEFAULT_DRAFT)
+export function AddTaskSheet({ editingTask, onSubmit, onDelete, onClose }: AddTaskSheetProps) {
+  const [draft, setDraft] = useState<NewTaskDraft>(
+    editingTask ? draftFromTask(editingTask) : DEFAULT_DRAFT,
+  )
 
+  const isEditing = !!editingTask
   const canSubmit = draft.title.trim().length > 0
 
   function handleSubmit() {
@@ -43,7 +59,7 @@ export function AddTaskSheet({ onSubmit, onClose }: AddTaskSheetProps) {
     <div className="sheet-scrim" onClick={onClose}>
       <div className="sheet" onClick={(e) => e.stopPropagation()}>
         <div className="drag-handle" />
-        <h2 className="sheet-heading">New task</h2>
+        <h2 className="sheet-heading">{isEditing ? 'Edit task' : 'New task'}</h2>
 
         <div className="field">
           <input
@@ -51,7 +67,10 @@ export function AddTaskSheet({ onSubmit, onClose }: AddTaskSheetProps) {
             className="title-input"
             placeholder="What needs doing?"
             value={draft.title}
-            onChange={(e) => setDraft({ ...draft, title: e.target.value })}
+            onChange={(e) => {
+              const title = e.target.value
+              setDraft((prev) => ({ ...prev, title }))
+            }}
             autoFocus
           />
         </div>
@@ -64,7 +83,7 @@ export function AddTaskSheet({ onSubmit, onClose }: AddTaskSheetProps) {
                 key={opt.value}
                 type="button"
                 className={draft.assignee === opt.value ? 'active' : ''}
-                onClick={() => setDraft({ ...draft, assignee: opt.value })}
+                onClick={() => setDraft((prev) => ({ ...prev, assignee: opt.value }))}
               >
                 {opt.label}
               </button>
@@ -80,7 +99,7 @@ export function AddTaskSheet({ onSubmit, onClose }: AddTaskSheetProps) {
                 key={opt.value}
                 type="button"
                 className={draft.category === opt.value ? `active ${opt.value}` : ''}
-                onClick={() => setDraft({ ...draft, category: opt.value })}
+                onClick={() => setDraft((prev) => ({ ...prev, category: opt.value }))}
               >
                 {opt.label}
               </button>
@@ -96,7 +115,7 @@ export function AddTaskSheet({ onSubmit, onClose }: AddTaskSheetProps) {
                 key={opt}
                 type="button"
                 className={draft.due === opt ? 'active' : ''}
-                onClick={() => setDraft({ ...draft, due: opt })}
+                onClick={() => setDraft((prev) => ({ ...prev, due: opt }))}
               >
                 {opt}
               </button>
@@ -112,7 +131,7 @@ export function AddTaskSheet({ onSubmit, onClose }: AddTaskSheetProps) {
                 key={opt.value}
                 type="button"
                 className={draft.recurrence === opt.value ? 'active' : ''}
-                onClick={() => setDraft({ ...draft, recurrence: opt.value })}
+                onClick={() => setDraft((prev) => ({ ...prev, recurrence: opt.value }))}
               >
                 {opt.label}
               </button>
@@ -123,15 +142,21 @@ export function AddTaskSheet({ onSubmit, onClose }: AddTaskSheetProps) {
         <button
           type="button"
           className="priority-row"
-          onClick={() => setDraft({ ...draft, priority: !draft.priority })}
+          onClick={() => setDraft((prev) => ({ ...prev, priority: !prev.priority }))}
         >
           <span className={`star-btn${draft.priority ? ' active' : ''}`}>★</span>
           <span className="label">Mark as priority</span>
         </button>
 
         <button type="button" className="submit-btn" disabled={!canSubmit} onClick={handleSubmit}>
-          Add task
+          {isEditing ? 'Save changes' : 'Add task'}
         </button>
+
+        {isEditing && onDelete && (
+          <button type="button" className="delete-btn" onClick={onDelete}>
+            Delete task
+          </button>
+        )}
       </div>
     </div>
   )

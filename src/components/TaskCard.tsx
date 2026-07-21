@@ -22,6 +22,7 @@ interface TaskCardProps {
   onToggleDone: (id: string) => void
   onTogglePriority: (id: string) => void
   onRemove: (id: string) => void
+  onEdit: (task: Task) => void
 }
 
 function AssigneeAvatar({ assignee }: { assignee: Task['assignee'] }) {
@@ -38,7 +39,7 @@ function AssigneeAvatar({ assignee }: { assignee: Task['assignee'] }) {
   return <img src={src} alt={alt} className="assignee-avatar" />
 }
 
-export function TaskCard({ task, onToggleDone, onTogglePriority, onRemove }: TaskCardProps) {
+export function TaskCard({ task, onToggleDone, onTogglePriority, onRemove, onEdit }: TaskCardProps) {
   const isRecurring = task.recurrence !== 'none'
 
   return (
@@ -62,7 +63,7 @@ export function TaskCard({ task, onToggleDone, onTogglePriority, onRemove }: Tas
         )}
       </button>
 
-      <div className="task-main">
+      <div className="task-main" onClick={() => onEdit(task)} role="button" tabIndex={0}>
         <p className={`task-title${task.done ? ' done' : ''}`}>{task.title}</p>
         <div className="task-meta">
           <span className={`category-badge ${task.category}`}>{CATEGORY_LABEL[task.category]}</span>

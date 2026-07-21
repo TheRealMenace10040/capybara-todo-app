@@ -212,6 +212,7 @@
 .task-main {
   flex: 1;
   min-width: 0;
+  cursor: pointer;
 }
 .task-title {
   font-size: 14px;
@@ -540,6 +541,17 @@
 .submit-btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+.delete-btn {
+  width: 100%;
+  background: none;
+  color: var(--dates-text);
+  border: none;
+  padding: 12px;
+  font-size: 13.5px;
+  font-weight: 600;
+  margin-top: 4px;
 }
 
 /* Celebration overlay */
