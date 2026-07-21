@@ -37,7 +37,15 @@ function App() {
     const q = query(collection(db, TASKS_COLLECTION), orderBy('createdAt', 'desc'))
     const unsubscribe = onSnapshot(q, (snapshot) => {
       setTasks(
-        snapshot.docs.map((d) => ({ id: d.id, ...(d.data() as Omit<Task, 'id'>) })),
+        snapshot.docs.map((d) => {
+          const data = d.data() as Omit<Task, 'id'>
+          return {
+            id: d.id,
+            ...data,
+            recurrence: data.recurrence ?? 'none',
+            completedAt: data.completedAt ?? null,
+          }
+        }),
       )
     })
     return unsubscribe
@@ -57,6 +65,10 @@ function App() {
       (filter === 'all' || t.assignee === filter) &&
       (categoryFilter === 'all' || t.category === categoryFilter),
   )
+  const activeTasks = filteredTasks.filter((t) => !t.done)
+  const completedTasks = filteredTasks
+    .filter((t) => t.done)
+    .sort((a, b) => (b.completedAt ?? 0) - (a.completedAt ?? 0))
 
   function triggerCelebration() {
     if (celebrationTimer.current) window.clearTimeout(celebrationTimer.current)
@@ -70,8 +82,28 @@ function App() {
     const task = tasks.find((t) => t.id === id)
     if (!task) return
     const nextDone = !task.done
-    await updateDoc(doc(db, TASKS_COLLECTION, id), { done: nextDone })
-    if (nextDone) triggerCelebration()
+
+    await updateDoc(doc(db, TASKS_COLLECTION, id), {
+      done: nextDone,
+      completedAt: nextDone ? Date.now() : null,
+    })
+
+    if (nextDone) {
+      triggerCelebration()
+      if (task.recurrence !== 'none') {
+        await addDoc(collection(db, TASKS_COLLECTION), {
+          title: task.title,
+          category: task.category,
+          assignee: task.assignee,
+          due: task.due,
+          priority: task.priority,
+          recurrence: task.recurrence,
+          done: false,
+          createdAt: Date.now(),
+          completedAt: null,
+        })
+      }
+    }
   }
 
   async function handleTogglePriority(id: string) {
@@ -91,8 +123,10 @@ function App() {
       assignee: draft.assignee,
       due: draft.due,
       priority: draft.priority,
+      recurrence: draft.recurrence,
       done: false,
       createdAt: Date.now(),
+      completedAt: null,
     })
     setIsAddSheetOpen(false)
   }
@@ -116,15 +150,32 @@ function App() {
         ) : filteredTasks.length === 0 ? (
           <EmptyFilterState />
         ) : (
-          filteredTasks.map((task) => (
-            <TaskCard
-              key={task.id}
-              task={task}
-              onToggleDone={handleToggleDone}
-              onTogglePriority={handleTogglePriority}
-              onRemove={handleRemove}
-            />
-          ))
+          <>
+            {activeTasks.map((task) => (
+              <TaskCard
+                key={task.id}
+                task={task}
+                onToggleDone={handleToggleDone}
+                onTogglePriority={handleTogglePriority}
+                onRemove={handleRemove}
+              />
+            ))}
+
+            {completedTasks.length > 0 && (
+              <>
+                <div className="section-divider">Completed ({completedTasks.length})</div>
+                {completedTasks.map((task) => (
+                  <TaskCard
+                    key={task.id}
+                    task={task}
+                    onToggleDone={handleToggleDone}
+                    onTogglePriority={handleTogglePriority}
+                    onRemove={handleRemove}
+                  />
+                ))}
+              </>
+            )}
+          </>
         )}
       </div>
 

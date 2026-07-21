@@ -1,6 +1,7 @@
 export type Assignee = 'dennis' | 'ramila' | 'both'
 export type Category = 'chores' | 'errands' | 'dates' | 'other'
 export type DueLabel = 'Today' | 'Tomorrow' | 'This week'
+export type Recurrence = 'none' | 'daily' | 'weekly' | 'monthly'
 
 export interface Task {
   id: string
@@ -10,7 +11,9 @@ export interface Task {
   due: DueLabel
   priority: boolean
   done: boolean
+  recurrence: Recurrence
   createdAt: number
+  completedAt: number | null
 }
 
 export type AssigneeFilter = 'all' | Assignee
@@ -22,6 +25,7 @@ export interface NewTaskDraft {
   category: Category
   due: DueLabel
   priority: boolean
+  recurrence: Recurrence
 }
 
 export const DEFAULT_DRAFT: NewTaskDraft = {
@@ -30,4 +34,5 @@ export const DEFAULT_DRAFT: NewTaskDraft = {
   category: 'chores',
   due: 'Today',
   priority: false,
+  recurrence: 'none',
 }

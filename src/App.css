@@ -177,6 +177,16 @@
   opacity: 0.55;
 }
 
+.section-divider {
+  font-size: 11.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  color: var(--text-muted);
+  margin: 10px 0 2px;
+  padding: 0 2px;
+}
+
 .checkbox {
   width: 22px;
   height: 22px;
@@ -245,6 +255,17 @@
 .due-text {
   font-size: 11px;
   color: var(--text-muted-2);
+}
+.recurrence-badge {
+  font-size: 10.5px;
+  color: var(--text-muted-2);
+  text-transform: capitalize;
+}
+.task-dates {
+  font-size: 10px;
+  color: var(--text-muted-2);
+  opacity: 0.8;
+  margin-top: 3px;
 }
 
 .task-side {
@@ -464,6 +485,26 @@
 }
 .category-buttons button.active.other {
   background: var(--other-solid);
+  color: white;
+  border-color: transparent;
+}
+
+.repeat-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.repeat-buttons button {
+  padding: 8px 14px;
+  border-radius: 12px;
+  border: 1.5px solid var(--border);
+  background: white;
+  color: var(--chip-text-inactive);
+  font-size: 13px;
+  font-weight: 600;
+}
+.repeat-buttons button.active {
+  background: var(--accent);
   color: white;
   border-color: transparent;
 }

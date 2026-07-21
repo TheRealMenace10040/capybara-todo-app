@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import type { Assignee, Category, DueLabel, NewTaskDraft } from '../types'
+import type { Assignee, Category, DueLabel, NewTaskDraft, Recurrence } from '../types'
 import { DEFAULT_DRAFT } from '../types'
 
 const ASSIGNEE_OPTIONS: { value: Assignee; label: string }[] = [
@@ -16,6 +16,13 @@ const CATEGORY_OPTIONS: { value: Category; label: string }[] = [
 ]
 
 const DUE_OPTIONS: DueLabel[] = ['Today', 'Tomorrow', 'This week']
+
+const RECURRENCE_OPTIONS: { value: Recurrence; label: string }[] = [
+  { value: 'none', label: 'None' },
+  { value: 'daily', label: 'Daily' },
+  { value: 'weekly', label: 'Weekly' },
+  { value: 'monthly', label: 'Monthly' },
+]
 
 interface AddTaskSheetProps {
   onSubmit: (draft: NewTaskDraft) => void
@@ -92,6 +99,22 @@ export function AddTaskSheet({ onSubmit, onClose }: AddTaskSheetProps) {
                 onClick={() => setDraft({ ...draft, due: opt })}
               >
                 {opt}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="field">
+          <p className="field-label">Repeat</p>
+          <div className="repeat-buttons">
+            {RECURRENCE_OPTIONS.map((opt) => (
+              <button
+                key={opt.value}
+                type="button"
+                className={draft.recurrence === opt.value ? 'active' : ''}
+                onClick={() => setDraft({ ...draft, recurrence: opt.value })}
+              >
+                {opt.label}
               </button>
             ))}
           </div>

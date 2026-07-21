@@ -1,12 +1,20 @@
 import avatarDennis from '../assets/avatar-dennis.png'
 import avatarRamila from '../assets/avatar-ramila.png'
 import type { Task } from '../types'
+import { formatDate } from '../dateFormat'
 
 const CATEGORY_LABEL: Record<Task['category'], string> = {
   chores: 'Chores',
   errands: 'Errands',
   dates: 'Dates',
   other: 'Other',
+}
+
+const RECURRENCE_LABEL: Record<Task['recurrence'], string> = {
+  none: '',
+  daily: 'Repeats daily',
+  weekly: 'Repeats weekly',
+  monthly: 'Repeats monthly',
 }
 
 interface TaskCardProps {
@@ -31,6 +39,8 @@ function AssigneeAvatar({ assignee }: { assignee: Task['assignee'] }) {
 }
 
 export function TaskCard({ task, onToggleDone, onTogglePriority, onRemove }: TaskCardProps) {
+  const isRecurring = task.recurrence !== 'none'
+
   return (
     <div className={`task-card${task.done ? ' done' : ''}`}>
       <button
@@ -57,6 +67,15 @@ export function TaskCard({ task, onToggleDone, onTogglePriority, onRemove }: Tas
         <div className="task-meta">
           <span className={`category-badge ${task.category}`}>{CATEGORY_LABEL[task.category]}</span>
           <span className="due-text">{task.due}</span>
+          {isRecurring && (
+            <span className="recurrence-badge" title={RECURRENCE_LABEL[task.recurrence]}>
+              ↻ {task.recurrence}
+            </span>
+          )}
+        </div>
+        <div className="task-dates">
+          Added {formatDate(task.createdAt)}
+          {task.done && task.completedAt && <> · Completed {formatDate(task.completedAt)}</>}
         </div>
       </div>
 
