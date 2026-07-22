@@ -12,6 +12,7 @@ export interface Task {
   priority: boolean
   done: boolean
   recurrence: Recurrence
+  weekDays: number[]
   createdAt: number
   completedAt: number | null
 }
@@ -26,6 +27,7 @@ export interface NewTaskDraft {
   due: DueLabel
   priority: boolean
   recurrence: Recurrence
+  weekDays: number[]
 }
 
 export const DEFAULT_DRAFT: NewTaskDraft = {
@@ -35,4 +37,5 @@ export const DEFAULT_DRAFT: NewTaskDraft = {
   due: 'Today',
   priority: false,
   recurrence: 'none',
+  weekDays: [],
 }

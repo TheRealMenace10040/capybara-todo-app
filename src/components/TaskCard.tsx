@@ -2,6 +2,7 @@ import avatarDennis from '../assets/avatar-dennis.png'
 import avatarRamila from '../assets/avatar-ramila.png'
 import type { Task } from '../types'
 import { formatDate } from '../dateFormat'
+import { describeWeekDays } from '../weekDays'
 
 const CATEGORY_LABEL: Record<Task['category'], string> = {
   chores: 'Chores',
@@ -15,6 +16,20 @@ const RECURRENCE_LABEL: Record<Task['recurrence'], string> = {
   daily: 'Repeats daily',
   weekly: 'Repeats weekly',
   monthly: 'Repeats monthly',
+}
+
+function recurrenceText(task: Task): string {
+  if (task.recurrence === 'weekly' && task.weekDays.length > 0) {
+    return `Repeats ${describeWeekDays(task.weekDays)}`
+  }
+  return RECURRENCE_LABEL[task.recurrence]
+}
+
+function recurrenceBadge(task: Task): string {
+  if (task.recurrence === 'weekly' && task.weekDays.length > 0) {
+    return describeWeekDays(task.weekDays)
+  }
+  return task.recurrence
 }
 
 interface TaskCardProps {
@@ -69,8 +84,8 @@ export function TaskCard({ task, onToggleDone, onTogglePriority, onRemove, onEdi
           <span className={`category-badge ${task.category}`}>{CATEGORY_LABEL[task.category]}</span>
           <span className="due-text">{task.due}</span>
           {isRecurring && (
-            <span className="recurrence-badge" title={RECURRENCE_LABEL[task.recurrence]}>
-              ↻ {task.recurrence}
+            <span className="recurrence-badge" title={recurrenceText(task)}>
+              ↻ {recurrenceBadge(task)}
             </span>
           )}
         </div>

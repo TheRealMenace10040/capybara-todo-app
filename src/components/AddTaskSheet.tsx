@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import type { Assignee, Category, DueLabel, NewTaskDraft, Recurrence, Task } from '../types'
 import { DEFAULT_DRAFT } from '../types'
+import { DAY_ABBR, DAY_NAMES, WEEKDAYS, WEEKEND_DAYS, isSameDaySet } from '../weekDays'
 
 const ASSIGNEE_OPTIONS: { value: Assignee; label: string }[] = [
   { value: 'dennis', label: 'Dennis' },
@@ -32,6 +33,7 @@ function draftFromTask(task: Task): NewTaskDraft {
     due: task.due,
     priority: task.priority,
     recurrence: task.recurrence,
+    weekDays: task.weekDays,
   }
 }
 
@@ -131,13 +133,61 @@ export function AddTaskSheet({ editingTask, onSubmit, onDelete, onClose }: AddTa
                 key={opt.value}
                 type="button"
                 className={draft.recurrence === opt.value ? 'active' : ''}
-                onClick={() => setDraft((prev) => ({ ...prev, recurrence: opt.value }))}
+                onClick={() =>
+                  setDraft((prev) => ({
+                    ...prev,
+                    recurrence: opt.value,
+                    weekDays: opt.value === 'weekly' ? prev.weekDays : [],
+                  }))
+                }
               >
                 {opt.label}
               </button>
             ))}
           </div>
         </div>
+
+        {draft.recurrence === 'weekly' && (
+          <div className="field">
+            <p className="field-label">Repeat on</p>
+            <div className="day-shortcuts">
+              <button
+                type="button"
+                className={isSameDaySet(draft.weekDays, WEEKDAYS) ? 'active' : ''}
+                onClick={() => setDraft((prev) => ({ ...prev, weekDays: WEEKDAYS }))}
+              >
+                Weekdays
+              </button>
+              <button
+                type="button"
+                className={isSameDaySet(draft.weekDays, WEEKEND_DAYS) ? 'active' : ''}
+                onClick={() => setDraft((prev) => ({ ...prev, weekDays: WEEKEND_DAYS }))}
+              >
+                Weekends
+              </button>
+            </div>
+            <div className="day-picker">
+              {DAY_ABBR.map((label, day) => (
+                <button
+                  key={day}
+                  type="button"
+                  className={draft.weekDays.includes(day) ? 'active' : ''}
+                  aria-label={DAY_NAMES[day]}
+                  onClick={() =>
+                    setDraft((prev) => ({
+                      ...prev,
+                      weekDays: prev.weekDays.includes(day)
+                        ? prev.weekDays.filter((d) => d !== day)
+                        : [...prev.weekDays, day].sort((a, b) => a - b),
+                    }))
+                  }
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
 
         <button
           type="button"

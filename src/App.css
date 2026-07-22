@@ -510,6 +510,47 @@
   border-color: transparent;
 }
 
+.day-shortcuts {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.day-shortcuts button {
+  flex: 1;
+  padding: 8px 14px;
+  border-radius: 12px;
+  border: 1.5px solid var(--border);
+  background: white;
+  color: var(--chip-text-inactive);
+  font-size: 13px;
+  font-weight: 600;
+}
+.day-shortcuts button.active {
+  background: var(--accent);
+  color: white;
+  border-color: transparent;
+}
+
+.day-picker {
+  display: flex;
+  gap: 6px;
+}
+.day-picker button {
+  flex: 1;
+  aspect-ratio: 1;
+  border-radius: 999px;
+  border: 1.5px solid var(--border);
+  background: white;
+  color: var(--chip-text-inactive);
+  font-size: 13px;
+  font-weight: 700;
+}
+.day-picker button.active {
+  background: var(--accent);
+  color: white;
+  border-color: transparent;
+}
+
 .priority-row {
   display: flex;
   align-items: center;

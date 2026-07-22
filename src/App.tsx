@@ -44,6 +44,7 @@ function App() {
             id: d.id,
             ...data,
             recurrence: data.recurrence ?? 'none',
+            weekDays: data.weekDays ?? [],
             completedAt: data.completedAt ?? null,
           }
         }),
@@ -99,6 +100,7 @@ function App() {
           due: task.due,
           priority: task.priority,
           recurrence: task.recurrence,
+          weekDays: task.weekDays,
           done: false,
           createdAt: Date.now(),
           completedAt: null,
@@ -125,6 +127,7 @@ function App() {
       due: draft.due,
       priority: draft.priority,
       recurrence: draft.recurrence,
+      weekDays: draft.weekDays,
       done: false,
       createdAt: Date.now(),
       completedAt: null,
@@ -141,6 +144,7 @@ function App() {
       due: draft.due,
       priority: draft.priority,
       recurrence: draft.recurrence,
+      weekDays: draft.weekDays,
     })
     setEditingTask(null)
   }
